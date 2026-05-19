@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Farevefarm — Intake Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream: #f5f0e8;
+      --warm-white: #faf8f4;
+      --sand: #e8dfd0;
+      --gold: #b8965a;
+      --gold-light: #d4ae77;
+      --charcoal: #2a2520;
+      --taupe: #7a6f63;
+      --light-taupe: #b0a89c;
+      --black: #1a1714;
+      --card-bg: #ffffff;
+      --border: #e0d9ce;
+      --shadow: 0 2px 20px rgba(42,37,32,0.07);
+      --shadow-lg: 0 8px 40px rgba(42,37,32,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--charcoal);
+      min-height: 100vh;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--black);
+      color: var(--cream);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .brand span { color: var(--gold); }
+    .header-sub {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--light-taupe);
+      font-weight: 400;
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    main { max-width: 780px; margin: 0 auto; padding: 28px 16px 80px; }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--charcoal);
+      margin-bottom: 4px;
+    }
+    .section-line {
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+      margin-bottom: 18px;
+    }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    /* ─── FORM FIELDS ─── */
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media(max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+    label {
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--taupe);
+      margin-bottom: 6px;
+      font-weight: 400;
+    }
+
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--warm-white);
+      color: var(--charcoal);
+      padding: 10px 14px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 300;
+      border-radius: 1px;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+    textarea { resize: vertical; min-height: 70px; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a6f63' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+
+    /* ─── TABS ─── */
+    .tab-bar {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      gap: 0;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 11px 6px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--light-taupe);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 400;
+    }
+    .tab-btn.active {
+      color: var(--charcoal);
+      border-bottom-color: var(--gold);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ─── SCORING ROWS ─── */
+    .score-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--sand);
+      gap: 10px;
+    }
+    .score-item:last-child { border-bottom: none; }
+    .score-label {
+      font-size: 0.82rem;
+      color: var(--charcoal);
+      font-weight: 400;
+      flex: 1;
+      min-width: 0;
+    }
+    .score-label small {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--light-taupe);
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+    .score-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .score-btn {
+      width: 28px; height: 28px;
+      border: 1px solid var(--border);
+      background: var(--warm-white);
+      color: var(--charcoal);
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 1px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .score-btn:hover { background: var(--sand); }
+    .score-value {
+      width: 36px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--charcoal);
+    }
+    .score-max {
+      font-size: 0.68rem;
+      color: var(--light-taupe);
+      flex-shrink: 0;
+    }
+
+    /* ─── TOTAL SCORE ─── */
+    .total-box {
+      background: var(--black);
+      color: var(--cream);
+      border-radius: 2px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .total-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--light-taupe);
+    }
+    .total-score-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .total-score-num span { font-size: 1rem; color: var(--light-taupe); }
+    .condition-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 1px;
+      font-size: 0.68rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 500;
+      border: 1px solid;
+    }
+    .badge-new { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+    .badge-kept { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
+    .badge-likenew { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
+    .badge-used { background: #fbe9e7; color: #bf360c; border-color: #ffab91; }
+
+    /* ─── PRICING ─── */
+    .pricing-result {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pricing-result-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--taupe);
+    }
+    .pricing-result-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      font-weight: 500;
+      color: var(--gold);
+    }
+
+    /* ─── SUBMIT ─── */
+    .submit-btn {
+      width: 100%;
+      background: var(--black);
+      color: var(--gold);
+      border: none;
+      padding: 16px;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 1px;
+      transition: background 0.2s;
+      font-weight: 400;
+      margin-top: 6px;
+    }
+    .submit-btn:hover { background: #3a3330; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ─── STATUS ─── */
+    .status-msg {
+      text-align: center;
+      padding: 12px;
+      border-radius: 2px;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      display: none;
+    }
+    .status-msg.success { background: #e8f5e9; color: #2e7d32; display: block; }
+    .status-msg.error { background: #fbe9e7; color: #bf360c; display: block; }
+    .status-msg.loading { background: var(--sand); color: var(--taupe); display: block; }
+
+    /* ─── DIVIDER ─── */
+    .divider { height: 1px; background: var(--border); margin: 16px 0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">Farevefarm<span>.</span></div>
+    <div class="header-sub">Intake Assessment System</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── PRODUCT INFO ── -->
+  <div style="margin-bottom:20px; margin-top:4px;">
+    <div class="section-title">Product Information</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Product Name / Brand</label>
+        <input type="text" id="productName" placeholder="e.g. Chanel Classic Flap" />
+      </div>
+      <div class="form-group">
+        <label>Size / Year</label>
+        <input type="text" id="sizeYear" placeholder="e.g. 25cm / 2022" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Product Type</label>
+        <select id="productType" onchange="switchTab(this.value)">
+          <option value="shoes">รองเท้า (Shoes)</option>
+          <option value="bags">กระเป๋า (Bags)</option>
+          <option value="acc">เครื่องประดับ (ACC)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Inspector</label>
+        <input type="text" id="inspector" placeholder="ชื่อผู้ตรวจสอบ" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Notes / Source</label>
+      <textarea id="notes" placeholder="บันทึกตำหนิเพิ่มเติม หรือแหล่งที่มา เช่น Saudi Arabia"></textarea>
+    </div>
+  </div>
+
+  <!-- ── SCORING ── -->
+  <div style="margin-bottom:20px;">
+    <div class="section-title">Condition Assessment</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-shoes" onclick="selectTab('shoes')">Shoes</button>
+      <button class="tab-btn" id="tab-bags" onclick="selectTab('bags')">Bags</button>
+      <button class="tab-btn" id="tab-acc" onclick="selectTab('acc')">ACC</button>
+    </div>
+
+    <!-- SHOES -->
+    <div class="tab-panel active" id="panel-shoes">
+      <div id="scores-shoes"></div>
+    </div>
+    <!-- BAGS -->
+    <div class="tab-panel" id="panel-bags">
+      <div id="scores-bags"></div>
+    </div>
+    <!-- ACC -->
+    <div class="tab-panel" id="panel-acc">
+      <div id="scores-acc"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- TOTAL -->
+    <div class="total-box">
+      <div>
+        <div class="total-label">Total Score</div>
+        <div class="total-score-num" id="totalNum">100<span>/100</span></div>
+      </div>
+      <div id="conditionBadge" class="condition-badge badge-new">NEW</div>
+    </div>
+  </div>
+
+  <!-- ── PRICING ── -->
+  <div style="margin-bottom:20px;">
+    <div class="section-title">Pricing Calculator</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="card">
+    <div class="form-row">
+      <div class="form-group">
+        <label>Cost Price (฿)</label>
+        <input type="number" id="costPrice" placeholder="0" oninput="calcPrice()" />
+      </div>
+      <div class="form-group">
+        <label>Market Price (฿)</label>
+        <input type="number" id="marketPrice" placeholder="0" oninput="calcPrice()" />
+      </div>
+    </div>
+    <div class="pricing-result" id="pricingResult" style="display:none;">
+      <div>
+        <div class="pricing-result-label">Suggested Selling Price</div>
+        <div style="font-size:0.7rem; color:var(--light-taupe); margin-top:2px;" id="priceNote"></div>
+      </div>
+      <div class="pricing-result-value" id="priceValue">฿0</div>
+    </div>
+  </div>
+
+  <!-- ── SUBMIT ── -->
+  <button class="submit-btn" id="submitBtn" onclick="submitForm()">
+    ✦ &nbsp; Save Record to Google Sheets &nbsp; ✦
+  </button>
+  <div class="status-msg" id="statusMsg"></div>
+
+</main>
+
+<script>
+// ──────────────────────────────────────────────
+// CONFIGURATION — แก้ตรงนี้เพียงจุดเดียว
+// ──────────────────────────────────────────────
+const APPS_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+// ──────────────────────────────────────────────
+// SCORING CRITERIA
+// ──────────────────────────────────────────────
+const criteria = {
+  shoes: [
+    { key: "sole",       label: "พื้นรองเท้า (Outsole)",       sub: "รอยสึก / แตก / หลุด",          max: 25 },
+    { key: "upper",      label: "วัสดุด้านนอก (Upper)",        sub: "รอยขีด / รอยครูด / สีซีด",       max: 25 },
+    { key: "insole",     label: "พื้นด้านใน (Insole)",         sub: "คราบเหงื่อ / กลิ่น / ขาด",       max: 20 },
+    { key: "hardware",   label: "อุปกรณ์/หัวเข็มขัด (Hardware)", sub: "รอยออกไซด์ / ขึ้นสนิม",         max: 15 },
+    { key: "box",        label: "กล่อง & อุปกรณ์ครบ (Box/Acc)", sub: "กล่องต้นฉบับ / ถุงผ้า / card",   max: 15 },
+  ],
+  bags: [
+    { key: "body",       label: "ตัวกระเป๋า (Body Leather)",   sub: "รอยขีด / คราบ / สีซีด",          max: 25 },
+    { key: "corners",    label: "ขอบมุม (Corners)",            sub: "แตก / ล่อน / สึก",               max: 20 },
+    { key: "interior",   label: "ภายใน (Interior)",            sub: "รอยปากกา / คราบเครื่องสำอาง",     max: 15 },
+    { key: "hardware_b", label: "อุปกรณ์ (Hardware)",          sub: "ออกไซด์ / รอยขีด / สนิม",        max: 15 },
+    { key: "strap",      label: "สายกระเป๋า (Strap/Chain)",    sub: "ยืด / แตก / ลอก",               max: 10 },
+    { key: "glue",       label: "กาวซึม / คราบน้ำ",            sub: "ร่องตะเข็บ / สีของหนัง",          max: 10 },
+    { key: "box_b",      label: "กล่อง & อุปกรณ์ครบ (Box/Acc)", sub: "กล่อง / dustbag / card",         max: 5  },
+  ],
+  acc: [
+    { key: "surface",    label: "พื้นผิว (Surface)",           sub: "รอยขีด / รอยกด / รอยครูด",        max: 30 },
+    { key: "plating",    label: "ชุบทอง/เคลือบ (Plating)",     sub: "สีหลุด / ลอก / ซีด",             max: 25 },
+    { key: "clasp",      label: "ตัวล็อค / ห่วง (Clasp/Ring)", sub: "ทำงานปกติ / รอยออกไซด์",         max: 20 },
+    { key: "stones",     label: "อัญมณี / เพชร (Stones)",      sub: "หาย / แตก / ขุ่น",               max: 15 },
+    { key: "box_a",      label: "กล่อง & อุปกรณ์ (Box/Acc)",   sub: "กล่อง / ถุง / การ์ด / ใบเสร็จ",   max: 10 },
+  ],
+};
+
+// State
+const scores = {
+  shoes: {}, bags: {}, acc: {}
+};
+let currentType = "shoes";
+
+// ──────────────────────────────────────────────
+// BUILD SCORING UI
+// ──────────────────────────────────────────────
+function buildScores(type) {
+  const container = document.getElementById("scores-" + type);
+  container.innerHTML = "";
+  criteria[type].forEach(c => {
+    scores[type][c.key] = c.max; // default = full score
+    const row = document.createElement("div");
+    row.className = "score-item";
+    row.innerHTML = `
+      <div class="score-label">${c.label}<small>${c.sub}</small></div>
+      <div class="score-controls">
+        <button class="score-btn" onclick="adjustScore('${type}','${c.key}',-1)">−</button>
+        <div class="score-value" id="val-${type}-${c.key}">${c.max}</div>
+        <button class="score-btn" onclick="adjustScore('${type}','${c.key}',1)">+</button>
+      </div>
+      <div class="score-max">/${c.max}</div>
+    `;
+    container.appendChild(row);
+  });
+  updateTotal();
+}
+
+function adjustScore(type, key, delta) {
+  const max = criteria[type].find(c => c.key === key).max;
+  let v = scores[type][key] + delta;
+  v = Math.max(0, Math.min(max, v));
+  scores[type][key] = v;
+  document.getElementById("val-" + type + "-" + key).textContent = v;
+  updateTotal();
+}
+
+function updateTotal() {
+  const type = currentType;
+  const total = Object.values(scores[type]).reduce((a, b) => a + b, 0);
+  document.getElementById("totalNum").innerHTML = `${total}<span>/100</span>`;
+
+  let badge, cls;
+  if (total >= 95)      { badge = "NEW";          cls = "badge-new"; }
+  else if (total >= 85) { badge = "KEPT UNUSED";  cls = "badge-kept"; }
+  else if (total >= 75) { badge = "LIKE NEW";     cls = "badge-likenew"; }
+  else                  { badge = "USED";          cls = "badge-used"; }
+
+  const el = document.getElementById("conditionBadge");
+  el.textContent = badge;
+  el.className = "condition-badge " + cls;
+  calcPrice();
+}
+
+// ──────────────────────────────────────────────
+// TABS
+// ──────────────────────────────────────────────
+function selectTab(type) {
+  ["shoes","bags","acc"].forEach(t => {
+    document.getElementById("panel-" + t).classList.toggle("active", t === type);
+    document.getElementById("tab-" + t).classList.toggle("active", t === type);
+  });
+  currentType = type;
+  updateTotal();
+}
+
+function switchTab(val) {
+  selectTab(val);
+}
+
+// ──────────────────────────────────────────────
+// PRICING
+// ──────────────────────────────────────────────
+const discounts = { "NEW": 0, "KEPT UNUSED": 0.10, "LIKE NEW": 0.15, "USED": 0.30 };
+
+function calcPrice() {
+  const market = parseFloat(document.getElementById("marketPrice").value) || 0;
+  const condition = document.getElementById("conditionBadge").textContent;
+  const discount = discounts[condition] ?? 0;
+  const price = market * (1 - discount);
+
+  const resultBox = document.getElementById("pricingResult");
+  if (market > 0) {
+    resultBox.style.display = "flex";
+    document.getElementById("priceValue").textContent = "฿" + price.toLocaleString("th-TH", {minimumFractionDigits: 0});
+    document.getElementById("priceNote").textContent = condition + (discount > 0 ? ` (ลด ${discount * 100}%)` : " (ราคาเต็ม)");
+  } else {
+    resultBox.style.display = "none";
+  }
+}
+
+// ──────────────────────────────────────────────
+// SUBMIT
+// ──────────────────────────────────────────────
+function submitForm() {
+  const productName = document.getElementById("productName").value.trim();
+  const inspector   = document.getElementById("inspector").value.trim();
+  if (!productName || !inspector) {
+    showStatus("กรุณากรอก Product Name และ Inspector ก่อนบันทึก", "error");
+    return;
+  }
+
+  const type = currentType;
+  const total = Object.values(scores[type]).reduce((a, b) => a + b, 0);
+  const condition = document.getElementById("conditionBadge").textContent;
+  const market = document.getElementById("marketPrice").value || "";
+  const cost   = document.getElementById("costPrice").value || "";
+  const discount = discounts[condition] ?? 0;
+  const suggestedPrice = market ? (parseFloat(market) * (1 - discount)).toFixed(0) : "";
+
+  const payload = {
+    ProductName:    productName,
+    SizeYear:       document.getElementById("sizeYear").value.trim(),
+    ProductType:    document.getElementById("productType").value,
+    Inspector:      inspector,
+    TotalScore:     total,
+    Condition:      condition,
+    Notes:          document.getElementById("notes").value.trim(),
+    CostPrice:      cost,
+    MarketPrice:    market,
+    SuggestedPrice: suggestedPrice,
+  };
+
+  const btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  showStatus("กำลังบันทึกข้อมูล...", "loading");
+
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+  .then(() => {
+    showStatus("✓ บันทึกสำเร็จแล้วค่ะ", "success");
+    btn.disabled = false;
+  })
+  .catch(err => {
+    showStatus("เกิดข้อผิดพลาด: " + err.message, "error");
+    btn.disabled = false;
+  });
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById("statusMsg");
+  el.textContent = msg;
+  el.className = "status-msg " + type;
+}
+
+// ──────────────────────────────────────────────
+// INIT
+// ──────────────────────────────────────────────
+buildScores("shoes");
+buildScores("bags");
+buildScores("acc");
+</script>
+</body>
+</html>
